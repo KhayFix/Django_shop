@@ -2,8 +2,77 @@
 {# Страница оформления заказа #}
 {% load static %}
 
-{% block title %}Checkout{% endblock %}
+{% block title %}{{ block.super }}|Checkout{% endblock %}
 
 {% block content %}
-    <h3>checkout</h3>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="box-element" id="form-wrapper">
+                <form id="form">
+                    <div id="user-info">
+                        <div class="form-field">
+                            <input required class="form-control" type="text" name="name"
+                                   placeholder="Имя..">
+                        </div>
+                        <div class="form-field">
+                            <input required class="form-control" type="text" name="email"
+                                   placeholder="Email..">
+                        </div>
+                    </div>
+                    <div id="shipping-info">
+                        <hr>
+                        <p>Информация о доставке:</p>
+                        <hr>
+                        <div class="form-field">
+                            <input class="form-control" type="text" name="address"
+                                   placeholder="Адресс..">
+                        </div>
+                        <div class="form-field">
+                            <input class="form-control" type="text" name="city"
+                                   placeholder="Город..">
+                        </div>
+                        <div class="form-field">
+                            <input class="form-control" type="text" name="state"
+                                   placeholder="Область..">
+                        </div>
+                        <div class="form-field">
+                            <input class="form-control" type="text" name="zipcode"
+                                   placeholder="Индекс..">
+                        </div>
+                    </div>
+
+                    <hr>
+                    <input id="form-button" class="btn btn-success btn-block" type="submit"
+                           value="Continue">
+                </form>
+            </div>
+            {# блок отвечающий за оплату #}
+            <br>
+
+            <div class="box-element hidden" id="payment-info">
+                <small>Варианты оплаты</small>
+                <div id="paypal-button-container"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="box-element">
+                <a class="btn btn-outline-dark" href="{% url 'cart_url' %}">&#x2190; Назад</a>
+                <a class="btn btn-success" href="{% url 'shop_view_url' %}">Продолжить покупки</a>
+                <hr>
+                <h3>Итого:</h3>
+                <hr>
+                <div class="cart-row">
+                    <div style="flex:2px">
+                        <img class="row-image" src="{% static 'images/placeholder.png' %}">
+                    </div>
+                    <div style="flex:2px"><p>Продукт 1</p></div>
+                    <div style="flex:1px"><p>200руб.</p></div>
+                    <div style="flex:1px"><p>x2</p></div>
+                </div>
+                <h5>Колличество: 2</h5>
+                <h5>Общая сумма: 400руб.</h5>
+            </div>
+        </div>
+    </div>
 {% endblock %}
