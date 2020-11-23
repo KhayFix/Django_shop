@@ -2,7 +2,7 @@
 {# Пользовательская корзина покупок #}
 {% load static %}
 
-{% block title %}Cart{% endblock %}
+{% block title %}{{ block.super }}|Cart{% endblock %}
 
 {% block content %}
     <div class="row">
