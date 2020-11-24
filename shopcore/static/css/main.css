@@ -113,3 +113,16 @@ h1, h2, h3, h4, h5, h6 {
     margin: 5px;
 
 }
+
+/* липкая навигационная панель*/
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 3;
+}
+
+.breadcrumb {
+    margin-top: 58px;
+    margin-bottom: 40px;
+}
