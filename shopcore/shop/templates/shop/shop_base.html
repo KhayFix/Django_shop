@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 
 {% block title %}Shop{% endblock %}
+{% block breadcrumb %}
+    {# хлебные крошки #}
+    <ol class="breadcrumb editContent">
+        <li class="breadcrumb-item">
+            <a href="/" class="editContent">Shop</a>
+        </li>
+        <li class="breadcrumb-item active editContent">Single Page</li>
+    </ol>
+{% endblock %}
 
 {% block content %}
 

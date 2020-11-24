@@ -18,6 +18,7 @@
     {% include 'include/navbar.html' %}
 
     <div class="container">
+    {% block breadcrumb %}{% endblock %}
         <br> {# декоративный отступ сверху #}
         {% block content %}
 
