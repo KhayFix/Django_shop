@@ -4,6 +4,15 @@
 
 {% block title %}{{ block.super }}|Checkout{% endblock %}
 
+{% block detail_breadcrumb %}
+    <li class="breadcrumb-item active editContent">
+        <a href="{% url 'cart_url' %}" class="editContent">cart</a>
+    </li>
+     <li class="breadcrumb-item active editContent">
+        <a href="{% url 'checkout_url' %}" class="editContent">checkout</a>
+    </li>
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-lg-6">

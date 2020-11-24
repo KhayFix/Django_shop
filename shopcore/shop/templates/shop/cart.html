@@ -4,6 +4,12 @@
 
 {% block title %}{{ block.super }}|Cart{% endblock %}
 
+{% block detail_breadcrumb %}
+    <li class="breadcrumb-item active editContent">
+        <a href="{% url 'cart_url' %}" class="editContent">cart</a>
+    </li>
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-lg 12">
