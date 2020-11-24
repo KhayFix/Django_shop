@@ -1,10 +1,12 @@
 from django.shortcuts import render
+from django.views import View
 
 
-# Create your views here.
-def shop_view(request):
-    context = {}
-    return render(request, 'shop/shop.html', context)
+class ShopListView(View):
+    template = 'shop/shop.html'
+
+    def get(self, request):
+        return render(request, self.template, context={})
 
 
 def cart(request):
