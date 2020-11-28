@@ -73,10 +73,10 @@ class ShippingAddress(models.Model):
                                  on_delete=models.SET_NULL, null=True, blank=True
                                  )
     order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True, blank=True)
-    region = models.CharField(max_length=200, verbose_name="Область")
-    city = models.CharField(max_length=150, verbose_name="Город")
-    address = models.CharField(max_length=150, verbose_name="Адрес")
-    zipcode = models.CharField(max_length=150, verbose_name="Индекс")
+    region = models.CharField(max_length=200, verbose_name="Область", null=True)
+    city = models.CharField(max_length=150, verbose_name="Город", null=True)
+    address = models.CharField(max_length=150, verbose_name="Адрес", null=True)
+    zipcode = models.CharField(max_length=150, verbose_name="Индекс", null=True)
     data_added = models.DateTimeField(auto_created=True, verbose_name="Дата заказа")
 
     def __repr__(self):
