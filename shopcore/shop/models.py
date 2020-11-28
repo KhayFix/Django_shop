@@ -77,7 +77,7 @@ class ShippingAddress(models.Model):
     city = models.CharField(max_length=150, verbose_name="Город", null=True)
     address = models.CharField(max_length=150, verbose_name="Адрес", null=True)
     zipcode = models.CharField(max_length=150, verbose_name="Индекс", null=True)
-    data_added = models.DateTimeField(auto_created=True, verbose_name="Дата заказа")
+    data_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата заказа")
 
     def __repr__(self):
         return f"{self.zipcode}-{self.city}-{self.address}"
