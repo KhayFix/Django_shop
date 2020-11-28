@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from django.views import View
 
+from .models import Product
+
 
 class ShopListView(View):
     template = 'shop/shop.html'
 
     def get(self, request):
-        return render(request, self.template, context={})
+        product = Product.objects.all()
+        return render(request, self.template, context={"products": product})
 
 
 def cart(request):
