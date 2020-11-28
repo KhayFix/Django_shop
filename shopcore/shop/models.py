@@ -55,8 +55,8 @@ class Product(models.Model):
 
 
 class OrderItem(models.Model):
-    product = models.ForeignKey("Product", verbose_name="Товар", on_delete=models.SET_NULL)
-    order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL)
+    product = models.ForeignKey("Product", verbose_name="Товар", on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=0, verbose_name="Колличество", blank=True)
     data_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
 
