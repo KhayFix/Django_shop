@@ -44,10 +44,19 @@ class Product(models.Model):
     price = models.FloatField(verbose_name='Цена')
     # если товар цифровой, то его можно не отправлять(почтой), за это будет отвечать digital
     digital = models.BooleanField(default=False, blank=True, verbose_name="Цифровой товар")
-    image = models.ImageField(verbose_name="Изображение", upload_to='image_product/')
+    image = models.ImageField(verbose_name="Изображение", upload_to='image_product/',
+                              default='placeholder.png', blank=True)
 
     def __str__(self):
         return self.name
+
+    @property
+    def image_url(self):
+        try:
+            url = self.image.url
+        except ValueError:
+            url = ' '
+        return url
 
     class Meta:
         verbose_name = "Товар"
