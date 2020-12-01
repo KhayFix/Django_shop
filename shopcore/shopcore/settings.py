@@ -119,5 +119,9 @@ STATIC_URL = '/static/'
 STATIC_DIR = BASE_DIR / 'static'
 STATICFILES_DIRS = [STATIC_DIR]
 
-MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = "/media/"
+if DEBUG:
+    MEDIA_ROOT = BASE_DIR / 'media'
+    MEDIA_URL = "/media/"
+else:
+    MEDIA_ROOT = BASE_DIR / 'images'
+    MEDIA_URL = '/images/'
