@@ -55,8 +55,8 @@ class Product(models.Model):
 
 
 class OrderItem(models.Model):
-    product = models.ForeignKey("Product", verbose_name="Товар", on_delete=models.SET_NULL)
-    order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL)
+    product = models.ForeignKey("Product", verbose_name="Товар", on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=0, verbose_name="Колличество", blank=True)
     data_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
 
@@ -69,4 +69,19 @@ class OrderItem(models.Model):
 
 
 class ShippingAddress(models.Model):
-    pass
+    customer = models.ForeignKey("Customer", verbose_name="Покупатель",
+                                 on_delete=models.SET_NULL, null=True, blank=True
+                                 )
+    order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True, blank=True)
+    region = models.CharField(max_length=200, verbose_name="Область", null=True)
+    city = models.CharField(max_length=150, verbose_name="Город", null=True)
+    address = models.CharField(max_length=150, verbose_name="Адрес", null=True)
+    zipcode = models.CharField(max_length=150, verbose_name="Индекс", null=True)
+    data_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата заказа")
+
+    def __repr__(self):
+        return f"{self.zipcode}-{self.city}-{self.address}"
+
+    class Meta:
+        verbose_name = "Адрес доставки"
+        verbose_name_plural = "Адреса доставки"
