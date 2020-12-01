@@ -16,7 +16,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=150, verbose_name="Имя")
     email = models.CharField(max_length=150)
 
-    def __repr__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -31,7 +31,7 @@ class Order(models.Model):
     complete = models.BooleanField(default=False, verbose_name="Статус корзины")
     transaction_id = models.CharField(max_length=100, verbose_name="ID транзакции")
 
-    def __repr__(self):
+    def __str__(self):
         return str(self.id)
 
     class Meta:
@@ -46,7 +46,7 @@ class Product(models.Model):
     digital = models.BooleanField(default=False, blank=True, verbose_name="Цифровой товар")
     image = models.ImageField(verbose_name="Изображение", upload_to='image_product/')
 
-    def __repr__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -60,7 +60,7 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(default=0, verbose_name="Колличество", blank=True)
     data_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
 
-    def __repr__(self):
+    def __str__(self):
         return f"{self.product.name}->{self.product.price}"
 
     class Meta:
@@ -79,7 +79,7 @@ class ShippingAddress(models.Model):
     zipcode = models.CharField(max_length=150, verbose_name="Индекс", null=True)
     data_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата заказа")
 
-    def __repr__(self):
+    def __str__(self):
         return f"{self.zipcode}-{self.city}-{self.address}"
 
     class Meta:
