@@ -20,8 +20,8 @@
                 <br>
                 <table class="table">
                     <tr>
-                        <th><h5>Предметы: <strong>3</strong></h5></th>
-                        <th><h5>Общее: <strong>3</strong></h5></th>
+                        <th><h5>Колличество: <strong>{{ order.get_cart_items }}</strong></h5></th>
+                        <th><h5>Общая сумма: <strong>{{ order.get_cart_total|floatformat }}</strong></h5></th>
                         <th>
                             <a href="{% url 'checkout_url' %}" class="btn btn-success btn-checkout">
                                 Оформить заказ &#x2192;</a>
@@ -39,24 +39,24 @@
                     <div style="flex:1px"><strong>Колличество</strong></div>
                     <div style="flex:1px"><strong>Общая цена</strong></div>
                 </div>
-
+                {% for item in items %}
                 <div class="cart-row">
                     <div style="flex:2px"><img class="row-image"
-                                               src="{% static 'images/placeholder.png' %}">
+                                               src="{{ item.product.image_url }}">
                     </div>
-                    <div style="flex:2px"><p>Продукт 1</p></div>
-                    <div style="flex:1"><p>200руб.</p></div>
+                    <div style="flex:2px"><p>{{ item.product.name }}</p></div>
+                    <div style="flex:1"><p>{{ item.product.price|floatformat }} р.</p></div>
                     <div style="flex:1">
-                        <p class="quantity">2</p>
+                        <p class="quantity">{{ item.quantity }}</p>
                         <div class="quantity">
                             <img class="chg-quantity" src="{% static  'images/arrow-up.png' %}">
 
                             <img class="chg-quantity" src="{% static  'images/arrow-down.png' %}">
                         </div>
                     </div>
-                    <div style="flex:1"><p>400руб.</p></div>
+                    <div style="flex:1"><p>{{ item.get_total|floatformat }} руб.</p></div>
                 </div>
-
+                {% endfor %}
             </div>
         </div>
     </div>

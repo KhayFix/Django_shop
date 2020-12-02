@@ -16,7 +16,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=150, verbose_name="Имя")
     email = models.CharField(max_length=150)
 
-    def __repr__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -31,8 +31,22 @@ class Order(models.Model):
     complete = models.BooleanField(default=False, verbose_name="Статус корзины")
     transaction_id = models.CharField(max_length=100, verbose_name="ID транзакции")
 
-    def __repr__(self):
+    def __str__(self):
         return str(self.id)
+
+    @property
+    def get_cart_total(self):
+        """Общая цена всех товаров в корзине"""
+        order_items = self.orderitem_set.all()
+        total = sum([item.get_total for item in order_items])
+        return total
+
+    @property
+    def get_cart_items(self):
+        """Общее колличество всех товаров в корзине"""
+        order_items = self.orderitem_set.all()
+        total = sum([item.quantity for item in order_items])
+        return total
 
     class Meta:
         verbose_name = "Заказ"
@@ -44,10 +58,19 @@ class Product(models.Model):
     price = models.FloatField(verbose_name='Цена')
     # если товар цифровой, то его можно не отправлять(почтой), за это будет отвечать digital
     digital = models.BooleanField(default=False, blank=True, verbose_name="Цифровой товар")
-    image = models.ImageField(verbose_name="Изображение", upload_to='image_product/')
+    image = models.ImageField(verbose_name="Изображение", upload_to='image_product/',
+                              default='placeholder.png', blank=True)
 
-    def __repr__(self):
+    def __str__(self):
         return self.name
+
+    @property
+    def image_url(self):
+        try:
+            url = self.image.url
+        except ValueError:
+            url = ' '
+        return url
 
     class Meta:
         verbose_name = "Товар"
@@ -55,13 +78,20 @@ class Product(models.Model):
 
 
 class OrderItem(models.Model):
-    product = models.ForeignKey("Product", verbose_name="Товар", on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey("Product", verbose_name="Товар", on_delete=models.SET_NULL,
+                                null=True)
     order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=0, verbose_name="Колличество", blank=True)
     data_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
 
-    def __repr__(self):
+    def __str__(self):
         return f"{self.product.name}->{self.product.price}"
+
+    @property
+    def get_total(self):
+        """Общая цена каждого товара"""
+        total = self.product.price * self.quantity
+        return total
 
     class Meta:
         verbose_name = "Позиция заказа"
@@ -72,14 +102,15 @@ class ShippingAddress(models.Model):
     customer = models.ForeignKey("Customer", verbose_name="Покупатель",
                                  on_delete=models.SET_NULL, null=True, blank=True
                                  )
-    order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True, blank=True)
+    order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True,
+                              blank=True)
     region = models.CharField(max_length=200, verbose_name="Область", null=True)
     city = models.CharField(max_length=150, verbose_name="Город", null=True)
     address = models.CharField(max_length=150, verbose_name="Адрес", null=True)
     zipcode = models.CharField(max_length=150, verbose_name="Индекс", null=True)
     data_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата заказа")
 
-    def __repr__(self):
+    def __str__(self):
         return f"{self.zipcode}-{self.city}-{self.address}"
 
     class Meta:
