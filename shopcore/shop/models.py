@@ -34,6 +34,20 @@ class Order(models.Model):
     def __str__(self):
         return str(self.id)
 
+    @property
+    def get_cart_total(self):
+        """Общая цена всех товаров в корзине"""
+        order_items = self.orderitem_set.all()
+        total = sum([item.get_total for item in order_items])
+        return total
+
+    @property
+    def get_cart_items(self):
+        """Общее колличество всех товаров в корзине"""
+        order_items = self.orderitem_set.all()
+        total = sum([item.quantity for item in order_items])
+        return total
+
     class Meta:
         verbose_name = "Заказ"
         verbose_name_plural = "Заказы"
@@ -64,13 +78,20 @@ class Product(models.Model):
 
 
 class OrderItem(models.Model):
-    product = models.ForeignKey("Product", verbose_name="Товар", on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey("Product", verbose_name="Товар", on_delete=models.SET_NULL,
+                                null=True)
     order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=0, verbose_name="Колличество", blank=True)
     data_added = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
 
     def __str__(self):
         return f"{self.product.name}->{self.product.price}"
+
+    @property
+    def get_total(self):
+        """Общая цена каждого товара"""
+        total = self.product.price * self.quantity
+        return total
 
     class Meta:
         verbose_name = "Позиция заказа"
@@ -81,7 +102,8 @@ class ShippingAddress(models.Model):
     customer = models.ForeignKey("Customer", verbose_name="Покупатель",
                                  on_delete=models.SET_NULL, null=True, blank=True
                                  )
-    order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True, blank=True)
+    order = models.ForeignKey("Order", verbose_name="Заказ", on_delete=models.SET_NULL, null=True,
+                              blank=True)
     region = models.CharField(max_length=200, verbose_name="Область", null=True)
     city = models.CharField(max_length=150, verbose_name="Город", null=True)
     address = models.CharField(max_length=150, verbose_name="Адрес", null=True)
