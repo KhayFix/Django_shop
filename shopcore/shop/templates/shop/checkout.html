@@ -71,16 +71,18 @@
                 <hr>
                 <h3>Итого:</h3>
                 <hr>
+                {% for item in items %}
                 <div class="cart-row">
                     <div style="flex:2px">
-                        <img class="row-image" src="{% static 'images/placeholder.png' %}">
+                        <img class="row-image" src="{{ item.product.image_url }}">
                     </div>
-                    <div style="flex:2px"><p>Продукт 1</p></div>
-                    <div style="flex:1px"><p>200руб.</p></div>
-                    <div style="flex:1px"><p>x2</p></div>
+                    <div style="flex:2px"><p>{{ item.product.name }}</p></div>
+                    <div style="flex:1px"><p>{{ item.product.price|floatformat }} руб.</p></div>
+                    <div style="flex:1px"><p>x{{ item.quantity }}</p></div>
                 </div>
-                <h5>Колличество: 2</h5>
-                <h5>Общая сумма: 400руб.</h5>
+                {% endfor %}
+                <h5>Колличество: {{ order.get_cart_items }}</h5>
+                <h5>Общая сумма: {{ order.get_cart_total|floatformat }} руб.</h5>
             </div>
         </div>
     </div>
