@@ -5,12 +5,20 @@ from .models import Product, Order
 from .utils import ObjectDetailCheckoutCartMixin
 
 
-class ShopListView(View):
+class ShopListView(ObjectDetailCheckoutCartMixin, View):
+    model = Order
     template = 'shop/shop.html'
+    products = Product.objects.all()
 
-    def get(self, request):
-        product = Product.objects.all()
-        return render(request, self.template, context={"products": product})
+    # def get(self, request):
+    #     if request.user.is_authenticated:
+    #         customer = request.user.customer
+    #         order = Order.objects.get(customer=customer).get_cart_items
+    #     else:
+    #         order = 0
+    #
+    #     product = Product.objects.all()
+    #     return render(request, self.template, context={"products": product, "cart_items": order})
 
 
 class Cart(ObjectDetailCheckoutCartMixin, View):
