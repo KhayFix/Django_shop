@@ -13,8 +13,9 @@
           crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
     <script type="text/javascript">
-        let user = '{{ request.user }}'
+        const user = '{{ request.user }}'
     </script>
+    <script type="text/javascript" src="{% static 'js/csrf_token.js' %}"></script>
 </head>
 <body>
     {# подключаем наше меню #}
