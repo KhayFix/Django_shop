@@ -12,7 +12,8 @@
             <div class="box-element product">
                 <h6><strong>{{ product.name }}</strong></h6>
                 <hr>
-                <button class="btn btn-outline-secondary add-btn">
+                <button data-product="{{ product.id }}" data-action="add"
+                        class="btn btn-outline-secondary add-btn update-cart">
                     Добавить
                 </button>
                 <a href="#" class="btn btn-outline-success">Посмотреть</a>
