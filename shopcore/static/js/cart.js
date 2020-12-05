@@ -37,16 +37,16 @@ function updateUserOrder(productId, action) {
     console.log('Пользователь авторизовался')
 
     let url = '/shop/update-item/'
-    let jsonString = JSON.stringify({'productId': productId, 'action': action})
+    let json = {'productId': productId, 'action': action}
 
     fetch(url, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json;charset=utf-8",
             "Accept": "application/json",
             "X-CSRFToken": csrfToken,
         },
-        body: jsonString,
+        body: JSON.stringify(json),
     })
         .then((response) => {
             return response.json()
