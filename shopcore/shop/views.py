@@ -1,5 +1,5 @@
-from django.shortcuts import render
 from django.views import View
+from django.http import JsonResponse
 
 from .models import Product, Order
 from .utils import ObjectDetailCheckoutCartMixin
@@ -29,3 +29,7 @@ class Cart(ObjectDetailCheckoutCartMixin, View):
 class Checkout(ObjectDetailCheckoutCartMixin, View):
     model = Order
     template = 'shop/checkout.html'
+
+
+def update_item(request):
+    return JsonResponse('Добавленно', safe=False)
