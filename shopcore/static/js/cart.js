@@ -36,7 +36,7 @@ function updateUserOrder(productId, action) {
     //отправка данный на вьюху update_item
     console.log('Пользователь авторизовался')
 
-    let url = 'update-item/'
+    let url = '/shop/update-item/'
     let jsonString = JSON.stringify({'productId': productId, 'action': action})
 
     fetch(url, {
