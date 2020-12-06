@@ -25,7 +25,8 @@ class ObjectDetailCheckoutCartMixin:
         context = {'products': self.products,
                    'items': items,
                    self.model.__name__.lower(): order,
-                   'cart_items': cart_items
+                   'cart_items': cart_items,
+                   'shipping': False,
                    }
 
         return render(request, self.template, context)
