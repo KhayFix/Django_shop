@@ -89,6 +89,7 @@
     </div>
     <script type="text/javascript">
         let shipping = '{{ order.shipping }}'
+        let total = '{{ order.get_cart_total|floatformat }}'
     </script>
     <script type="text/javascript" src="{% static 'js/checkout_shipping.js' %}"></script>
 {% endblock %}
