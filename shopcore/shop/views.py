@@ -56,3 +56,8 @@ def update_item(request):
         order_item.delete()
 
     return JsonResponse('Добавленно', safe=False)
+
+
+def process_order(request):
+    """Получения данных из формы 'Информация о доставке' """
+    return JsonResponse('Данные получены', safe=False)
