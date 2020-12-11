@@ -55,4 +55,29 @@ function submitFormData() {
         userFormData.name = form.name.value
         userFormData.email = form.email.value
     }
+    sendFormData()
+}
+
+function sendFormData() {
+    const url = "/shop/process-order/"
+    const json = {'user': userFormData, 'shipping': userShippingInfo};
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json;charset=utf-8",
+            "Accept": "application/json",
+            "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify(json)
+    })
+        .then((response) => {
+            return response.json()
+        })
+        .then((data) => {
+            console.log('data:', data)
+            //    выводим сообщение и перенаправляем на главную страницу
+            alert("Транзакция завершена")
+            window.location.href = urlShop
+        })
 }
