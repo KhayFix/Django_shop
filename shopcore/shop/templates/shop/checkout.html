@@ -88,6 +88,7 @@
         </div>
     </div>
     <script type="text/javascript">
+        let urlShop = '{% url 'shop_view_url' %}'
         let shipping = '{{ order.shipping }}'
         let total = '{{ order.get_cart_total|floatformat }}'
     </script>
