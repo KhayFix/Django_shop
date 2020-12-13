@@ -1,5 +1,8 @@
 // смотри документацию django https://docs.djangoproject.com/en/3.1/ref/csrf/
 
+const csrfToken = getCookie('csrftoken');
+const cookieCart = JSON.parse(getCookie('cart'));
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -15,4 +18,11 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-const csrfToken = getCookie('csrftoken');
+
+if (!cookieCart) { // если куки корзины пусты мы создаем объект cart
+    cart = {}
+    console.log('Корзина создана')
+    document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/" // создали куки
+}
+
+console.log('Cart:', cookieCart)

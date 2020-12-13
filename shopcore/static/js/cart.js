@@ -26,10 +26,34 @@ function checkButtons() {
 const authorizationCheck = (dataUser, productId, action) => {
     console.log('USER:', dataUser)
     if (dataUser === "AnonymousUser") {
-        console.log('Пользователь не авторизован')
+        addCookieItem(productId, action)
     } else {
         updateUserOrder(productId, action)
     }
+}
+
+function addCookieItem(productId, action) {
+    console.log('Пользователь не авторизован')
+
+    if (action === 'add') {
+        if(cookieCart[productId] === undefined) {
+            cookieCart[productId] = {'quantity': 1}
+        }else {
+            cookieCart[productId]['quantity'] += 1
+        }
+    }
+
+    if(action === 'remove') {
+        cookieCart[productId]['quantity'] -= 1
+
+        if(cookieCart[productId]['quantity'] <= 0) {
+            console.log("Удаляем элемент")
+            delete cookieCart[productId]
+        }
+    }
+
+    document.cookie = 'cart=' + JSON.stringify(cookieCart) + ';domain=;path=/'
+    location.reload()
 }
 
 function updateUserOrder(productId, action) {

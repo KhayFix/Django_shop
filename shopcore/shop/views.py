@@ -1,8 +1,9 @@
 import json
+from datetime import datetime
 from django.views import View
 from django.http import JsonResponse
 
-from .models import Product, Order, OrderItem
+from .models import Product, Order, OrderItem, ShippingAddress
 from .utils import ObjectDetailCheckoutCartMixin
 
 
@@ -56,3 +57,34 @@ def update_item(request):
         order_item.delete()
 
     return JsonResponse('Добавленно', safe=False)
+
+
+def process_order(request):
+    """Получения данных из формы 'Информация о доставке' """
+    data = json.loads(request.body)
+    transaction_id = datetime.now().timestamp()
+    total = int(data['user'].get('total'))
+
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+        order.transaction_id = transaction_id
+
+        if total == int(order.get_cart_total):  # перевод статуса корзины в True, тем самым мы убираем товары из нее.
+            order.complete = True
+        order.save()
+
+        if order.shipping:
+            ShippingAddress.objects.create(
+                customer=customer,
+                order=order,
+                region=data['shipping'].get('state'),
+                city=data['shipping'].get('city'),
+                address=data['shipping'].get('address'),
+                zipcode=data['shipping'].get('zipcode'),
+            )
+    else:
+        print('Пользователь не авторизован')
+
+    return JsonResponse('Данные получены', safe=False)
