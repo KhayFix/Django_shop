@@ -26,10 +26,34 @@ function checkButtons() {
 const authorizationCheck = (dataUser, productId, action) => {
     console.log('USER:', dataUser)
     if (dataUser === "AnonymousUser") {
-        console.log('Пользователь не авторизован')
+        addCookieItem(productId, action)
     } else {
         updateUserOrder(productId, action)
     }
+}
+
+function addCookieItem(productId, action) {
+    console.log('Пользователь не авторизован')
+
+    if (action === 'add') {
+        if(cookieCart[productId] === undefined) {
+            cookieCart[productId] = {'quantity': 1}
+        }else {
+            cookieCart[productId]['quantity'] += 1
+        }
+    }
+
+    if(action === 'remove') {
+        cookieCart[productId]['quantity'] -= 1
+
+        if(cookieCart[productId]['quantity'] <= 0) {
+            console.log("Удаляем элемент")
+            delete cookieCart[productId]
+        }
+    }
+
+    document.cookie = 'cart=' + JSON.stringify(cookieCart) + ';domain=;path=/'
+    location.reload()
 }
 
 function updateUserOrder(productId, action) {
@@ -37,16 +61,16 @@ function updateUserOrder(productId, action) {
     console.log('Пользователь авторизовался')
 
     let url = '/shop/update-item/'
-    let jsonString = JSON.stringify({'productId': productId, 'action': action})
+    let json = {'productId': productId, 'action': action}
 
     fetch(url, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json;charset=utf-8",
             "Accept": "application/json",
             "X-CSRFToken": csrfToken,
         },
-        body: jsonString,
+        body: JSON.stringify(json),
     })
         .then((response) => {
             return response.json()

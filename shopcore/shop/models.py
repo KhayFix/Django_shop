@@ -35,6 +35,16 @@ class Order(models.Model):
         return str(self.id)
 
     @property
+    def shipping(self):
+        """Если товар не цифровой, то показываем форму для ввода адреса"""
+        shipping = False
+        order_item = self.orderitem_set.all()
+        for data in order_item:
+            if not data.product.digital:
+                shipping = True
+        return shipping
+
+    @property
     def get_cart_total(self):
         """Общая цена всех товаров в корзине"""
         order_items = self.orderitem_set.all()
