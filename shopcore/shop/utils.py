@@ -1,5 +1,6 @@
 import json
 from django.shortcuts import render
+from django.db.models import ObjectDoesNotExist
 from .models import Product
 
 
@@ -27,7 +28,7 @@ class ObjectDetailCheckoutCartMixin:
                    'items': items,
                    self.model.__name__.lower(): order,
                    'cart_items': cart_items,
-                   'shipping': False,
+                   'shipping': order['shipping'],
                    }
 
         return render(request, self.template, context)
@@ -35,23 +36,30 @@ class ObjectDetailCheckoutCartMixin:
     @staticmethod
     def anonymous_user_cookie_cart(cookie_cart):
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
 
         for key, value in cookie_cart.items():  # получили колл. товара в корзине через куки.
-            products = Product.objects.get(id=key)
+            try:
+                products = Product.objects.get(id=key)
+            except ObjectDoesNotExist as error:
+                print(error)  # TODO тут должна быть запись в логи.
+            else:
+                order['get_cart_items'] += value.get('quantity')
+                total = (products.price * value.get('quantity'))
+                order['get_cart_total'] += total
+                # используем для рендеринга корзины для анонимного пользователя
+                item = {
+                    'product': {
+                        'id': products.id,
+                        'name': products.name,
+                        'price': products.price,
+                        'image_url': products.image_url, },
+                    'quantity': value.get('quantity'),
+                    'get_total': total,
+                }
+                items.append(item)
 
-            order['get_cart_items'] += value.get('quantity')
-            total = (products.price * value.get('quantity'))
-            order['get_cart_total'] += total
-            # используем для рендеринга корзины для анонимного пользователя
-            item = {
-                'product': {
-                    'id': products.id,
-                    'name': products.name,
-                    'price': products.price,
-                    'image_url': products.image_url, },
-                'quantity': value.get('quantity'),
-                'get_total': total,
-            }
-            items.append(item)
+                if not products.digital:
+                    order['shipping'] = True
+
         return items, order
