@@ -28,7 +28,6 @@ class ObjectDetailCheckoutCartMixin:
                    'items': items,
                    self.model.__name__.lower(): order,
                    'cart_items': cart_items,
-                   'shipping': order['shipping'],
                    }
 
         return render(request, self.template, context)
