@@ -2,6 +2,7 @@
 
 const csrfToken = getCookie('csrftoken');
 const cookieCart = JSON.parse(getCookie('cart'));
+const cart = {}
 
 function getCookie(name) {
     let cookieValue = null;
@@ -20,7 +21,6 @@ function getCookie(name) {
 }
 
 if (!cookieCart) { // если куки корзины пусты мы создаем объект cart
-    cart = {}
     console.log('Корзина создана')
     createCookieCart(cart)
 }
