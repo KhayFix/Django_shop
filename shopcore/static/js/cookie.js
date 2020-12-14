@@ -22,7 +22,11 @@ function getCookie(name) {
 if (!cookieCart) { // если куки корзины пусты мы создаем объект cart
     cart = {}
     console.log('Корзина создана')
-    document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/" // создали куки
+    createCookieCart(cart)
+}
+
+function createCookieCart(data) {
+    document.cookie = 'cart=' + JSON.stringify(data) + ";domain=;path=/" // создали куки
 }
 
 console.log('Cart:', cookieCart)
