@@ -1,4 +1,5 @@
 import json
+from typing import Dict, List
 from django.shortcuts import render
 from django.db.models import ObjectDoesNotExist
 from .models import Product
@@ -22,7 +23,7 @@ class ObjectDetailCheckoutCartMixin:
             cart_items = order.get_cart_items
         else:
             cookie_cart: dict = json.loads(request.COOKIES.get('cart', '{}'))  # {'1': {'quantity': 2}...}
-            items, order = self.anonymous_user_cookie_cart(cookie_cart)
+            items, order = anonymous_user_cookie_cart(cookie_cart)
             cart_items = order['get_cart_items']
         context = {'products': self.products,
                    'items': items,
@@ -32,33 +33,37 @@ class ObjectDetailCheckoutCartMixin:
 
         return render(request, self.template, context)
 
-    @staticmethod
-    def anonymous_user_cookie_cart(cookie_cart):
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
 
-        for key, value in cookie_cart.items():  # получили колл. товара в корзине через куки.
-            try:
-                products = Product.objects.get(id=key)
-            except ObjectDoesNotExist as error:
-                print(error)  # TODO тут должна быть запись в логи.
-            else:
-                order['get_cart_items'] += value.get('quantity')
-                total = (products.price * value.get('quantity'))
-                order['get_cart_total'] += total
-                # используем для рендеринга корзины для анонимного пользователя
-                item = {
-                    'product': {
-                        'id': products.id,
-                        'name': products.name,
-                        'price': products.price,
-                        'image_url': products.image_url, },
-                    'quantity': value.get('quantity'),
-                    'get_total': total,
-                }
-                items.append(item)
+def anonymous_user_cookie_cart(cookie_cart: Dict) -> List[Dict] and Dict:
+    """
+    Используется для обработки данных из кук и
+    генерации данных для рендеринга корзины анонимного пользователя.
+    """
+    items = []
+    order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
 
-                if not products.digital:
-                    order['shipping'] = True
+    for key, value in cookie_cart.items():  # получили колл. товара в корзине через куки.
+        try:
+            products = Product.objects.get(id=key)
+        except ObjectDoesNotExist as error:
+            print(error)  # TODO тут должна быть запись в логи.
+        else:
+            order['get_cart_items'] += value.get('quantity')
+            total = (products.price * value.get('quantity'))
+            order['get_cart_total'] += total
+            # используем для рендеринга корзины для анонимного пользователя
+            item = {
+                'product': {
+                    'id': products.id,
+                    'name': products.name,
+                    'price': products.price,
+                    'image_url': products.image_url, },
+                'quantity': value.get('quantity'),
+                'get_total': total,
+            }
+            items.append(item)
 
-        return items, order
+            if not products.digital:
+                order['shipping'] = True
+
+    return items, order
