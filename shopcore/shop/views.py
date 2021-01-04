@@ -7,9 +7,10 @@ from django.shortcuts import redirect
 from django.views import View
 from django.http import JsonResponse
 
-from .models import Product, Order, OrderItem, ShippingAddress, CouponDiscount
-from .utils import ObjectDetailCheckoutCartMixin
+
 from .forms import CouponForm
+from .models import Product, Order, OrderItem, ShippingAddress, Customer, CouponDiscount
+from .utils import ObjectDetailCheckoutCartMixin, anonymous_user_cookie_cart
 
 
 class ShopListView(ObjectDetailCheckoutCartMixin, View):
@@ -65,7 +66,10 @@ def update_item(request):
 
 
 def process_order(request):
-    """Получения данных из формы 'Информация о доставке' """
+    """Получения данных из формы 'Информация о доставке' с помощью js.
+
+    Сохранение этих данных для авторизованного и анонимного пользователя.
+    """
     data = json.loads(request.body)
     transaction_id = datetime.now().timestamp()
     total = int(data['user'].get('total'))
@@ -74,23 +78,40 @@ def process_order(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
 
-        order.transaction_id = transaction_id
-
-        if total == int(order.get_cart_total):  # перевод статуса корзины в True, тем самым мы убираем товары из нее.
-            order.complete = True
-        order.save()
-
-        if order.shipping:
-            ShippingAddress.objects.create(
-                customer=customer,
-                order=order,
-                region=data['shipping'].get('state'),
-                city=data['shipping'].get('city'),
-                address=data['shipping'].get('address'),
-                zipcode=data['shipping'].get('zipcode'),
-            )
     else:
         print('Пользователь не авторизован')
+        cookie_cart = json.loads(request.COOKIES.get('cart', '{}'))
+
+        name = data['user'].get('name', 'AnonymousUser')
+        email = data['user'].get('email', False)
+
+        items, rest_ = anonymous_user_cookie_cart(cookie_cart)
+
+        customer, created = Customer.objects.get_or_create(email=email, )
+        customer.name = name
+        customer.save()
+
+        order = Order.objects.create(customer=customer, complete=False)
+
+        for item in items:
+            product = Product.objects.get(id=item['product'].get('id'))
+            order_item = OrderItem.objects.create(product=product, order=order, quantity=item.get('quantity'))
+
+    order.transaction_id = transaction_id
+
+    if total == int(order.get_cart_total):  # перевод статуса корзины в True, тем самым мы убираем товары из нее.
+        order.complete = True
+    order.save()
+
+    if order.shipping:
+        ShippingAddress.objects.create(
+            customer=customer,
+            order=order,
+            region=data['shipping'].get('state'),
+            city=data['shipping'].get('city'),
+            address=data['shipping'].get('address'),
+            zipcode=data['shipping'].get('zipcode'),
+        )
 
     return JsonResponse('Данные получены', safe=False)
 

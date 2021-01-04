@@ -78,6 +78,7 @@ function sendFormData() {
             console.log('data:', data)
             //    выводим сообщение и перенаправляем на главную страницу
             alert("Транзакция завершена")
+            createCookieCart(cart) // заменили куки на пустой объект cart = {}
             window.location.href = urlShop
         })
 }

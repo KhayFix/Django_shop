@@ -51,8 +51,7 @@ function addCookieItem(productId, action) {
             delete cookieCart[productId]
         }
     }
-
-    document.cookie = 'cart=' + JSON.stringify(cookieCart) + ';domain=;path=/'
+    createCookieCart(cookieCart)
     location.reload()
 }
 
