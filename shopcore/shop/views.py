@@ -1,9 +1,15 @@
 import json
 from datetime import datetime
+
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect
 from django.views import View
 from django.http import JsonResponse
 
-from .models import Product, Order, OrderItem, ShippingAddress, Customer
+
+from .forms import CouponForm
+from .models import Product, Order, OrderItem, ShippingAddress, Customer, CouponDiscount
 from .utils import ObjectDetailCheckoutCartMixin, anonymous_user_cookie_cart
 
 
@@ -108,3 +114,30 @@ def process_order(request):
         )
 
     return JsonResponse('Данные получены', safe=False)
+
+
+def get_coupon(request, code):
+    try:
+        coupon = CouponDiscount.objects.get(code=code)
+        return coupon
+    except ObjectDoesNotExist:
+        messages.info(request, f"Купон {code} не существует.")
+
+
+class AddCouponView(View):
+    def post(self, *args, **kwargs):
+        form = CouponForm(self.request.POST or None)
+
+        if form.is_valid():
+            try:
+                code = form.cleaned_data.get('code')
+                coupon = get_coupon(self.request, code)
+                if coupon:
+                    customer = self.request.user.customer
+                    order = Order.objects.get(customer=customer, complete=False)
+                    order.coupon = coupon
+                    order.save()
+                    messages.success(self.request, f"Купон {code} успешно добавлен.")
+            except ObjectDoesNotExist:
+                messages.info(self.request, "У вас нет активного заказа.")
+            return redirect('checkout_url')

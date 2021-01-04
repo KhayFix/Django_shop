@@ -3,6 +3,7 @@ from typing import Dict, List
 from django.shortcuts import render
 from django.db.models import ObjectDoesNotExist
 from .models import Product
+from .forms import CouponForm
 
 
 class ObjectDetailCheckoutCartMixin:
@@ -25,10 +26,12 @@ class ObjectDetailCheckoutCartMixin:
             cookie_cart: dict = json.loads(request.COOKIES.get('cart', '{}'))  # {'1': {'quantity': 2}...}
             items, order = anonymous_user_cookie_cart(cookie_cart)
             cart_items = order['get_cart_items']
+        coupon = CouponForm()
         context = {'products': self.products,
                    'items': items,
                    self.model.__name__.lower(): order,
                    'cart_items': cart_items,
+                   'coupon': coupon,
                    }
 
         return render(request, self.template, context)
