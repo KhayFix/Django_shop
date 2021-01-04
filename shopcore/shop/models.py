@@ -27,6 +27,8 @@ class Customer(models.Model):
 class Order(models.Model):
     customer = models.ForeignKey("Customer", verbose_name="Покупатель", on_delete=models.SET_NULL,
                                  null=True, blank=True)
+    coupon = models.ForeignKey('CouponDiscount', verbose_name="Скидочный купон", on_delete=models.SET_NULL,
+                               blank=True, null=True)
     data_ordered = models.DateTimeField(auto_now_add=True, verbose_name="Дата заказа")
     complete = models.BooleanField(default=False, verbose_name="Статус корзины")
     transaction_id = models.CharField(max_length=100, verbose_name="ID транзакции")
@@ -49,6 +51,8 @@ class Order(models.Model):
         """Общая цена всех товаров в корзине"""
         order_items = self.orderitem_set.all()
         total = sum([item.get_total for item in order_items])
+        if self.coupon:
+            total -= self.coupon.amount
         return total
 
     @property
@@ -130,7 +134,7 @@ class ShippingAddress(models.Model):
 
 class CouponDiscount(models.Model):
     code = models.CharField(max_length=20, verbose_name="Купон")
-    amount = models.IntegerField()
+    amount = models.IntegerField(verbose_name='Сумма')
 
     def __str__(self):
         return self.code
