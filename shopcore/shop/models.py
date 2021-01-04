@@ -126,3 +126,15 @@ class ShippingAddress(models.Model):
     class Meta:
         verbose_name = "Адрес доставки"
         verbose_name_plural = "Адреса доставки"
+
+
+class CouponDiscount(models.Model):
+    code = models.CharField(max_length=20, verbose_name="Купон")
+    amount = models.IntegerField()
+
+    def __str__(self):
+        return self.code
+
+    class Meta:
+        verbose_name = "Скидочный купон"
+        verbose_name_plural = "Скидочные купоны"
